@@ -42,3 +42,17 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(book)
 }
+
+func GetBookHandler(w http.ResponseWriter, r *http.Request) {
+    vars := mux.Vars(r)
+    id := vars["id"]
+
+    book, found := storage.GetBookByID(id)
+    if !found {
+        http.Error(w, "Book not found", http.StatusNotFound)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(book)
+}
