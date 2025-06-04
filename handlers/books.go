@@ -56,3 +56,30 @@ func GetBookHandler(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(book)
 }
+
+var books = []models.Book{
+    {ID: "1", Title: "Book One", Author: "Author A", Year: 2001},
+    {ID: "2", Title: "Book Two", Author: "Author B", Year: 2005},
+}
+
+func UpdateBook(c *gin.Context) {
+    id := c.Param("id")
+
+    var updatedBook models.Book
+    if err := c.ShouldBindJSON(&updatedBook); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+
+    for i, b := range books {
+        if b.ID == id {
+            updatedBook.ID = id
+            books[i] = updatedBook
+
+            c.JSON(http.StatusOK, updatedBook)
+            return
+        }
+    }
+
+    c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
+}
