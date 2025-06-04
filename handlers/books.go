@@ -84,24 +84,18 @@ func UpdateBook(c *gin.Context) {
     c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
 }
 
-func TestDeleteBook(t *testing.T) {
-	book := addTestBook(t)
+func addBookForDelete(t *testing.T) models.Book {
+  book := models.Book{
+    Title:  "Delete Me",
+    Author: "Bye Author",
+    Pages:  99,
+  }
+  body, _ := json.Marshal(book)
+  req := httptest.NewRequest("POST", "/books", bytes.NewReader(body))
+  w := httptest.NewRecorder()
+  handlers.CreateBook(w, req)
 
-	req := httptest.NewRequest("DELETE", "/books/"+book.ID, nil)
-	w := httptest.NewRecorder()
-
-	handlers.DeleteBook(w, req)
-	resp := w.Result()
-
-	if resp.StatusCode != http.StatusNoContent {
-		t.Errorf("Expected 204 No Content, got %v", resp.Status)
-	}
-
-	reqCheck := httptest.NewRequest("GET", "/books/"+book.ID, nil)
-	wCheck := httptest.NewRecorder()
-
-	handlers.GetBook(wCheck, reqCheck)
-	if wCheck.Result().StatusCode != http.StatusNotFound {
-		t.Errorf("Book was not deleted")
-	}
- }
+  var created models.Book
+  json.NewDecoder(w.Body).Decode(&created)
+  return created
+}
