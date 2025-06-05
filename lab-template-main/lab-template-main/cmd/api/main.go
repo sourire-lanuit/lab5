@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
-	"your_module_name/handlers"
+	"github.com/sourire-lanuit/lab5/handlers"
 )
 
 func main() {
