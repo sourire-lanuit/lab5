@@ -3,7 +3,7 @@ package handlers
 import (
     "net/http"
     "github.com/gin-gonic/gin"
-    "your_module/models"
+    "github.com/sourire-lanuit/lab5/models"
 )
 
 
