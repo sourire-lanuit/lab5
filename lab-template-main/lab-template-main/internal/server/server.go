@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	db "github.com/nochzato/example/db/sqlc"
+	db "github.com/sourire-lanuit/lab5/db/sqlc"
 )
 
 type Server struct {

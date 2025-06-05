@@ -1,12 +1,11 @@
-package tests
+package handlers_test
 
 import (
-	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
-	"your_module_name/handlers"
+	"github.com/sourire-lanuit/lab5/handlers"
 )
 
 func TestCreateBook_Success(t *testing.T) {

@@ -6,7 +6,9 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"your_module_name/models"
+	"github.com/gorilla/mux"
+
+	"github.com/sourire-lanuit/lab5/models"
 )
 
 var books = make(map[string]models.Book)
@@ -47,7 +49,7 @@ func GetBookHandler(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     id := vars["id"]
 
-    book, found := storage.GetBookByID(id)
+    book, found := books[id]
     if !found {
         http.Error(w, "Book not found", http.StatusNotFound)
         return
@@ -57,51 +59,16 @@ func GetBookHandler(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(book)
 }
 
-var books = []models.Book{
-    {ID: "1", Title: "Book One", Author: "Author A", Year: 2001},
-    {ID: "2", Title: "Book Two", Author: "Author B", Year: 2005},
-}
+func DeleteBook(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
 
-func UpdateBook(c *gin.Context) {
-    id := c.Param("id")
-
-    var updatedBook models.Book
-    if err := c.ShouldBindJSON(&updatedBook); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
-
-    for i, b := range books {
-        if b.ID == id {
-            updatedBook.ID = id
-            books[i] = updatedBook
-
-            c.JSON(http.StatusOK, updatedBook)
-            return
-        }
-    }
-
-    c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
-}
-
-func TestDeleteBook(t *testing.T) {
-	book := addTestBook(t)
-
-	req := httptest.NewRequest("DELETE", "/books/"+book.ID, nil)
-	w := httptest.NewRecorder()
-
-	handlers.DeleteBook(w, req)
-	resp := w.Result()
-
-	if resp.StatusCode != http.StatusNoContent {
-		t.Errorf("Expected 204 No Content, got %v", resp.Status)
+	if _, ok := books[id]; !ok {
+		http.Error(w, "Book not found", http.StatusNotFound)
+		return
 	}
 
-	reqCheck := httptest.NewRequest("GET", "/books/"+book.ID, nil)
-	wCheck := httptest.NewRecorder()
+	delete(books, id)
 
-	handlers.GetBook(wCheck, reqCheck)
-	if wCheck.Result().StatusCode != http.StatusNotFound {
-		t.Errorf("Book was not deleted")
-	}
- }
+	w.WriteHeader(http.StatusNoContent)
+}

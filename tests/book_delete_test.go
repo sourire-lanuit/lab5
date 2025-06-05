@@ -6,9 +6,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"your_module_name/handlers"
-	"your_module_name/models"
+    "github.com/sourire-lanuit/lab5/handlers"
+	"github.com/sourire-lanuit/lab5/models"
 )
 
 func addBookForDelete(t *testing.T) models.Book {
@@ -40,7 +39,7 @@ func TestDeleteBook(t *testing.T) {
 
 	reqCheck := httptest.NewRequest("GET", "/books/"+book.ID, nil)
 	wCheck := httptest.NewRecorder()
-	handlers.GetBook(wCheck, reqCheck)
+	handlers.GetBookHandler(wCheck, reqCheck)
 
 	if wCheck.Result().StatusCode != http.StatusNotFound {
 		t.Errorf("Book was not deleted")

@@ -3,11 +3,12 @@ package handlers_test
 import (
 	"encoding/json"
 	"net/http"
+	"bytes"
 	"net/http/httptest"
 	"testing"
 
-	"your_module_name/handlers"
-	"your_module_name/models"
+	"github.com/sourire-lanuit/lab5/handlers"
+	"github.com/sourire-lanuit/lab5/models"
 )
 
 func addBookForRead(t *testing.T) models.Book {
@@ -32,7 +33,7 @@ func TestGetBook(t *testing.T) {
 	req := httptest.NewRequest("GET", "/books/"+book.ID, nil)
 	w := httptest.NewRecorder()
 
-	handlers.GetBook(w, req)
+	handlers.GetBookHandler(w, req)
 	if w.Result().StatusCode != http.StatusOK {
 		t.Errorf("Expected 200, got %d", w.Result().StatusCode)
 	}
