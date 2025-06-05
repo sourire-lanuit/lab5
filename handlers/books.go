@@ -72,3 +72,14 @@ func DeleteBook(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusNoContent)
 }
+
+func ListBooks(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	bookList := make([]models.Book, 0, len(books))
+	for _, b := range books {
+		bookList = append(bookList, b)
+	}
+
+	json.NewEncoder(w).Encode(bookList)
+}
