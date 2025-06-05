@@ -7,30 +7,41 @@ import (
 )
 
 
-var books = []models.Book{
-    {ID: "1", Title: "Book One", Author: "Author A", Year: 2001},
-    {ID: "2", Title: "Book Two", Author: "Author B", Year: 2005},
-}
+func UpdateBook(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
 
-func UpdateBook(c *gin.Context) {
-    id := c.Param("id")
+	existing, ok := books[id]
+	if !ok {
+		http.Error(w, "Book not found", http.StatusNotFound)
+		return
+	}
 
-    var updatedBook models.Book
-    if err := c.ShouldBindJSON(&updatedBook); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
+	
+	var updated models.Book
+	body, _ := io.ReadAll(r.Body)
+	if err := json.Unmarshal(body, &updated); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
 
-    for i, b := range books {
-        if b.ID == id {
-            // Оновлюємо поля книги, зберігаємо ідентифікатор незмінним
-            updatedBook.ID = id
-            books[i] = updatedBook
+	
+	if strings.TrimSpace(updated.Title) == "" || len(updated.Title) > 255 {
+		http.Error(w, "Title is required and must be < 255", http.StatusBadRequest)
+		return
+	}
+	if strings.TrimSpace(updated.Author) == "" || len(updated.Author) > 255 {
+		http.Error(w, "Author is required and must be < 255", http.StatusBadRequest)
+		return
+	}
+	if updated.Pages <= 0 {
+		http.Error(w, "Pages must be > 0", http.StatusBadRequest)
+		return
+	}
 
-            c.JSON(http.StatusOK, updatedBook)
-            return
-        }
-    }
+	updated.ID = existing.ID
+	books[id] = updated
 
-    c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(updated)
 }
