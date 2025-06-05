@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"your_module_name/models"
+	"github.com/sourire-lanuit/lab5/models"
 )
 
 var books = make(map[string]models.Book)
