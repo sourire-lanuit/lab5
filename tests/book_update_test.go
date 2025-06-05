@@ -9,8 +9,8 @@ import (
 
     "github.com/gin-gonic/gin"
     "github.com/stretchr/testify/assert"
-    "your_module/handlers"
-    "your_module/models"
+    "github.com/sourire-lanuit/lab5/handlers"
+    "github.com/sourire-lanuit/lab5/models"
 )
 
 func setupRouter() *gin.Engine {
