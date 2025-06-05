@@ -11,7 +11,7 @@ import (
 	"github.com/sourire-lanuit/lab5/models"
 )
 
-func addBookForRead(t *testing.T) models.Book {
+func addBookForRead(_ *testing.T) models.Book {
 	book := models.Book{
 		Title:  "ReadBook",
 		Author: "Reader",
