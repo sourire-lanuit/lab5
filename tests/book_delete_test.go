@@ -3,11 +3,11 @@ package handlers_test
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/sourire-lanuit/lab5/handlers"
+	"github.com/sourire-lanuit/lab5/models"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-    "github.com/sourire-lanuit/lab5/handlers"
-	"github.com/sourire-lanuit/lab5/models"
 )
 
 func addBookForDelete(_ *testing.T) models.Book {
