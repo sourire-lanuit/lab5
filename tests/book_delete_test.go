@@ -10,7 +10,7 @@ import (
 	"github.com/sourire-lanuit/lab5/models"
 )
 
-func addBookForDelete(t *testing.T) models.Book {
+func addBookForDelete(_ *testing.T) models.Book {
 	book := models.Book{
 		Title:  "Delete Me",
 		Author: "Bye Author",
