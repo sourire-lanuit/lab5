@@ -1,7 +1,6 @@
-package tests
+package handlers_test
 
 import (
-	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"strings"

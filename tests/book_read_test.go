@@ -3,6 +3,7 @@ package handlers_test
 import (
 	"encoding/json"
 	"net/http"
+	"bytes"
 	"net/http/httptest"
 	"testing"
 
@@ -32,7 +33,7 @@ func TestGetBook(t *testing.T) {
 	req := httptest.NewRequest("GET", "/books/"+book.ID, nil)
 	w := httptest.NewRecorder()
 
-	handlers.GetBook(w, req)
+	handlers.GetBookHandler(w, req)
 	if w.Result().StatusCode != http.StatusOK {
 		t.Errorf("Expected 200, got %d", w.Result().StatusCode)
 	}

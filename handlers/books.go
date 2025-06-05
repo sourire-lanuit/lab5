@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"github.com/gorilla/mux"
+
 	"github.com/sourire-lanuit/lab5/models"
 )
 
@@ -47,7 +49,7 @@ func GetBookHandler(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     id := vars["id"]
 
-    book, found := storage.GetBookByID(id)
+    book, found := books[id]
     if !found {
         http.Error(w, "Book not found", http.StatusNotFound)
         return
@@ -57,45 +59,16 @@ func GetBookHandler(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(book)
 }
 
-var books = []models.Book{
-    {ID: "1", Title: "Book One", Author: "Author A", Year: 2001},
-    {ID: "2", Title: "Book Two", Author: "Author B", Year: 2005},
-}
+func DeleteBook(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
 
-func UpdateBook(c *gin.Context) {
-    id := c.Param("id")
+	if _, ok := books[id]; !ok {
+		http.Error(w, "Book not found", http.StatusNotFound)
+		return
+	}
 
-    var updatedBook models.Book
-    if err := c.ShouldBindJSON(&updatedBook); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
+	delete(books, id)
 
-    for i, b := range books {
-        if b.ID == id {
-            updatedBook.ID = id
-            books[i] = updatedBook
-
-            c.JSON(http.StatusOK, updatedBook)
-            return
-        }
-    }
-
-    c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
-}
-
-func addBookForDelete(t *testing.T) models.Book {
-  book := models.Book{
-    Title:  "Delete Me",
-    Author: "Bye Author",
-    Pages:  99,
-  }
-  body, _ := json.Marshal(book)
-  req := httptest.NewRequest("POST", "/books", bytes.NewReader(body))
-  w := httptest.NewRecorder()
-  handlers.CreateBook(w, req)
-
-  var created models.Book
-  json.NewDecoder(w.Body).Decode(&created)
-  return created
+	w.WriteHeader(http.StatusNoContent)
 }
