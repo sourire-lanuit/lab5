@@ -83,3 +83,25 @@ func UpdateBook(c *gin.Context) {
 
     c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
 }
+
+func TestDeleteBook(t *testing.T) {
+	book := addTestBook(t)
+
+	req := httptest.NewRequest("DELETE", "/books/"+book.ID, nil)
+	w := httptest.NewRecorder()
+
+	handlers.DeleteBook(w, req)
+	resp := w.Result()
+
+	if resp.StatusCode != http.StatusNoContent {
+		t.Errorf("Expected 204 No Content, got %v", resp.Status)
+	}
+
+	reqCheck := httptest.NewRequest("GET", "/books/"+book.ID, nil)
+	wCheck := httptest.NewRecorder()
+
+	handlers.GetBook(wCheck, reqCheck)
+	if wCheck.Result().StatusCode != http.StatusNotFound {
+		t.Errorf("Book was not deleted")
+	}
+ }
