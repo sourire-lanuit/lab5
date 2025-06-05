@@ -1,6 +1,7 @@
 package server
 
 import (
+  "encoding/json"
   "net/http"
   "strings"
 
@@ -18,6 +19,10 @@ func (r *router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
   method := req.Method
 
   switch {
+	case path == "/health" && method == http.MethodGet:
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+
   case path == "/books" && method == http.MethodPost:
     handlers.CreateBook(w, req)
 
