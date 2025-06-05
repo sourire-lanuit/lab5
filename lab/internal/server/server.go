@@ -1,36 +1,45 @@
 package server
 
 import (
-	"encoding/json"
-	"log"
-	"net/http"
+  "net/http"
+  "strings"
 
-	"github.com/go-chi/chi/v5"
-	db "github.com/sourire-lanuit/lab5/db/sqlc"
+  "github.com/sourire-lanuit/lab5/handlers"
 )
 
-type Server struct {
-	router *chi.Mux
-	store  db.Store
+type router struct{}
+
+func NewRouter() http.Handler {
+  return &router{}
 }
 
-func NewServer(store db.Store) *Server {
-	s := &Server{
-		router: chi.NewRouter(),
-		store:  store,
-	}
-	s.routes()
-	return s
-}
+func (r *router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+  path := req.URL.Path
+  method := req.Method
 
-func (s *Server) routes() {
-	s.router.Get("/health", s.handleHealth)
-}
+  switch {
+  case path == "/books" && method == http.MethodPost:
+    handlers.CreateBook(w, req)
 
-func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
-}
+  case strings.HasPrefix(path, "/books/"):
+    id := strings.TrimPrefix(path, "/books/")
+    if id == "" {
+      http.NotFound(w, req)
+      return
+    }
 
-func (s *Server) Run(port string) {
-	log.Fatal(http.ListenAndServe(port, s.router))
+    switch method {
+    case http.MethodGet:
+      handlers.GetBookHandler(w, req)
+    case http.MethodPut:
+      handlers.UpdateBook(w, req)
+    case http.MethodDelete:
+      handlers.DeleteBook(w, req)
+    default:
+      http.NotFound(w, req)
+    }
+
+  default:
+    http.NotFound(w, req)
+  }
 }
