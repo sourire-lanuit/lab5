@@ -1,0 +1,7 @@
+CREATE TABLE books (
+  id UUID PRIMARY KEY,
+  title TEXT NOT NULL,
+  author TEXT NOT NULL,
+  pages INTEGER NOT NULL,
+  year INTEGER NOT NULL
+);
