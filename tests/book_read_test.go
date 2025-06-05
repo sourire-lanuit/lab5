@@ -6,8 +6,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"your_module_name/handlers"
-	"your_module_name/models"
+	"github.com/sourire-lanuit/lab5/handlers"
+	"github.com/sourire-lanuit/lab5/models"
 )
 
 func addBookForRead(t *testing.T) models.Book {
