@@ -1,25 +1,19 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"os"
-
-	"github.com/jackc/pgx/v5/pgxpool"
-	db "github.com/nochzato/example/db/sqlc"
-	"github.com/nochzato/example/internal/server"
+	"log"
+	"net/http"
+	"your_module_name/handlers"
 )
 
 func main() {
-	connPool, err := pgxpool.New(context.Background(), "postgresql://postgres:postgres@localhost:5432/api_db")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
-		os.Exit(1)
-	}
-	defer connPool.Close()
+	r := mux.NewRouter()
 
-	store := db.NewStore(connPool)
+	r.HandleFunc("/books", handlers.CreateBook).Methods("POST")
+	r.HandleFunc("/books/{id}", handlers.GetBookHandler).Methods("GET")
+	r.HandleFunc("/books/{id}", handlers.UpdateBook).Methods("PUT")
+	r.HandleFunc("/books/{id}", handlers.DeleteBook).Methods("DELETE")
 
-	server := server.NewServer(store)
-	server.Run(":3000")
+	log.Println("Server running on http://localhost:8080")
+	log.Fatal(http.ListenAndServe(":8080", r))
 }
